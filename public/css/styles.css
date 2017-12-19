@@ -1,0 +1,13 @@
+.container {
+    padding-top: 180px;
+}
+
+h1 {
+    text-align: center;
+}
+
+#add-task {
+    position: absolute;
+    top: 100px;
+    left: 20px;
+}
