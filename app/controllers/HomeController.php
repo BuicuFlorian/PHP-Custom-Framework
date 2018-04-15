@@ -3,13 +3,13 @@
 namespace App\Controllers;
 
 class HomeController
-{   
+{
     /**
      * Class constructor.
      */
     public function __construct()
-    {   
-        if (isAuth()) {
+    {
+        if (session()->isLoggedIn()) {
             return redirect('/tasks');
         }
     }
