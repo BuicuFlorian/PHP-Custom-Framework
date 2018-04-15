@@ -1,32 +1,43 @@
 <?php require 'partials/head.php'; ?>
 
-<div class="container">
-    <h1 class="display-1">Log In</h1>
-     <div class="row">
-        <div class="col-sm-6 offset-3">
-            <?php if ($error !== null) : ?>
-                <div class="alert alert-danger alert-dismissable fade show text-center">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong><?= $error ?></strong>
-                </div>
-            <?php endif; ?>
-            <form method="POST" action="\login">
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                        <input type="text" class="form-control" name="username" id="username" placeholder="Username" required autofocus>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-success btn-block">Submit</button>
-            </form>
+<?php if ($message) : ?>
+    <div class="alert alert-success alert-dismissible fade show">
+        <p class="lead"><?= $message ?></p>
+    </div>
+<?php endif; ?>
+
+<?php if ($errors) : ?>
+    <?= displayErrors($errors); ?>
+<?php endif; ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 offset-3">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h1 class="display-1 text-light">Log In</h1>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="\login">
+                        <div class="form-group">
+                            <label for="username">
+                                <b>Username:</b>
+                            </label>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="Your username" required autofocus>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">
+                                <b>Password:</b>
+                            </label>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Your password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">Log In</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
