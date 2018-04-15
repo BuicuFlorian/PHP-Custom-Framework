@@ -3,15 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Core\Validator;
 
 class LoginController
-{   
+{
     /**
      * Class constructor.
      */
     public function __construct()
     {
-        if (isAuth()) {
+        if (session()->isLoggedIn()) {
             return redirect('/tasks');
         }
     }
@@ -21,42 +22,38 @@ class LoginController
      */
     public function index()
     {   
-        $error = session('login-error');
-        
-        return view('login', compact('error'));
+        $message = session()->message();
+        session()->clearMessage();
+        $errors = session()->errors();
+        session()->clearErrors();
+
+        return view('login', compact('message', 'errors'));
     }
 
     /**
      * Authenticate the given user.
      */
     public function authenticate()
-    {
-        $user = User::findByUsername(request('username'));
+    {   
+        $validator = new Validator();
+        $validator->isEmpty(['username' => request('username')]);
+        $validator->isString(['username' => request('username')]);
+        $validator->isEmpty(['password' => request('password')]);
+        $validator->isString(['password' => request('password')]);
 
-        if ($user) {
-            return $this->verifyPassword(request('password'), $user[0]);
+        if (empty($validator->errors)) {
+            $user = User::findByUsername(request('username'));
+
+            if ($user && password_verify(request('password'), $user->password)) {
+                session()->login($user);
+                return redirect('/tasks');
+            } else {
+                session()->errors(['Username and password do not match our records.']);
+            }
+        } else {
+            session()->errors($validator->errors);
         }
 
-        session('login-error', 'Invalid username.');
-        return redirect('/login');
-    }
-
-    /**
-     * Verify that the given password matches user's password.
-     * 
-     * @param  string $password
-     * @param  object $user
-     */
-    private function verifyPassword($password, $user)
-    {
-        $validPassword = password_verify($password, $user->password);
-
-        if ($validPassword) {
-            User::setSession($user);
-            return redirect('/tasks');
-        }
-
-        session('login-error', 'Invalid password.');
         return redirect('/login');
     }
 
@@ -65,9 +62,12 @@ class LoginController
      */
     public function logout()
     {
-        session_unset();
-        session_destroy();
+        if (session()->isLoggedIn()) {
+            session()->logout();
 
-        return redirect('/login');
+            return redirect('/login');
+        }
+
+        return view('errors/404');
     }
 }
