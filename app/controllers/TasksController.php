@@ -3,15 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\Task;
+use App\Core\Validator;
+use App\Core\Pagination;
 
 class TasksController
-{   
+{
     /**
      * Class constructor.
      */
     public function __construct()
     {
-        if (!isAuth()) {
+        if (!session()->isLoggedIn()) {
             return redirect('/login');
         }
     }
@@ -21,10 +23,18 @@ class TasksController
      */
     public function index()
     {
-        $tasks = Task::all();
-        $error = session('tasks-error');
+        $message = session()->message();
+        session()->clearMessage();
+        $errors = session()->errors();
+        session()->clearErrors();
 
-        return view('tasks', compact('tasks', 'error'));
+        $currentPage = request('page') ?? 1;
+        $perPage = 10;
+        $totalPages = Task::countAll(session()->user_id);
+        $pagination = new Pagination($currentPage, $perPage, $totalPages);
+        $tasks = Task::paginate($pagination, session()->user_id);
+
+        return view('tasks', compact('tasks', 'message', 'errors', 'pagination'));
     }
 
     /**
@@ -32,11 +42,18 @@ class TasksController
      */
     public function store()
     {
-        Task::save([
-            'description' => request('description'),
-            'completed' => false
-        ]);
+        $validator = new Validator();
+        $validator->isEmpty(['description' => request('description')]);
+        $validator->isString(['description' => request('description')]);
 
+        if (empty($validator->errors)) {
+            $task = new Task(['description' => request('description')]);
+            $task->save();
+        } else {
+            session()->errors($validator->errors);
+        }
+
+        session()->message('Your task was successfully created.');
         return redirect('/tasks');
     }
 
@@ -45,19 +62,32 @@ class TasksController
      */
     public function update()
     {
-        $task = Task::findById(request('id'));
+        $validator = new Validator();
+        $validator->isEmpty(['description' => request('description')]);
+        $validator->isString(['description' => request('description')]);
+        $validator->isEmpty(['completed' => request('completed')]);
+        $validator->isString(['completed' => request('completed')]);
 
-        if (count($task) > 0) {
-            Task::update([
-                'id' => $task[0]->id,
+        if (empty($validator->errors)) {
+            $task = new Task();
+            $task = $task->findById(request('id'));
+
+            if (!empty($task)) {
+                $updatedTask = new Task([
+                'id' => request('id'),
                 'description' => request('description'),
                 'completed' => request('completed')
             ]);
+                $updatedTask->save();
 
-            return redirect('/tasks');
+                session()->message('Your task was successfully updated.');
+            } else {
+                session()->errors(['No task found!']);
+            }
+        } else {
+            session()->errors($validator->errors);
         }
-
-        session('tasks-error', 'No task found!');
+        
         return redirect('/tasks');
     }
 
@@ -66,14 +96,17 @@ class TasksController
      */
     public function destroy()
     {
-        $task = Task::findById(request('id'));
+        $task = new Task();
+        $task = $task->findById(request('id'));
 
-        if (count($task) > 0) {
-            Task::delete($task);
+        if (!empty($task)) {
+            $task->delete(request('id'));
+
+            session()->message('Your task was successfully deleted.');
             return redirect('/tasks');
         }
 
-        session('tasks-error', 'No task found!');
+        session()->errors(['No task found!']);
         return redirect('/tasks');
     }
 }
