@@ -6,6 +6,7 @@
       <!-- Modal Header -->
       <div class="modal-header text-center">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <br>
       </div>
 
       <!-- Modal body -->
@@ -16,11 +17,11 @@
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" id="id" name="id">
 
-            <button type="submit" class="btn btn-success btn-block">
+            <button type="submit" class="btn btn-success pull-right">
                 <i class="fa fa-thumbs-up"></i> Yes
             </button>
 
-            <button type="button" class="btn btn-danger btn-block" data-dismiss="modal">
+            <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">
                 <i class="fa fa-thumbs-down"></i> No
             </button>
         </form>
