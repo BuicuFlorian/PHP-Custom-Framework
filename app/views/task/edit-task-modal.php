@@ -10,18 +10,25 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <h1 class="font-weight-light">Edit your task</h1>
-        <br>
         <form method="POST" action="/tasks/edit">
             <input type="hidden" name="_method" value="PUT">
             <input type="hidden" id="id" name="id">
 
             <div class="form-group">
+                <label for="description"><b>Description:</b></label>
                 <textarea class="form-control" rows="5" name="description" id="description" placeholder="Description" required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-info btn-block">
-                <i class="fa fa-edit"></i> Submit
+            <div class="form-group">
+                <label for="completed"><b>Completed:</b></label>
+                <select class="form-control" name="completed" id="completed" required>
+                  <option value="1">True</option>
+                  <option value="0">False</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-block">
+                <i class="fa fa-edit"></i> Update
             </button>
         </form>
       </div>
