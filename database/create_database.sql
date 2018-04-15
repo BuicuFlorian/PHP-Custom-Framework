@@ -1,0 +1,22 @@
+CREATE DATABASE php_framework;
+
+USE php_framework;
+
+CREATE TABLE users 
+( 
+	id INT(11) AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(191) UNIQUE NOT NULL, 
+	password VARCHAR(191) NOT NULL,
+	joining_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE users ADD INDEX index_username (username);
+
+CREATE TABLE tasks 
+( 
+	id INT(11) AUTO_INCREMENT PRIMARY KEY,
+	description VARCHAR(191) NOT NULL, 
+	completed BOOLEAN DEFAULT FALSE NOT NULL,
+	user_id int(11) NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users(id)
+);
