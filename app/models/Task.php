@@ -3,57 +3,47 @@
 namespace App\Models;
 
 use App\Core\App;
+use App\Core\Database\BaseModel;
 
-class Task
-{
+class Task extends BaseModel
+{   
+    static protected $table = 'tasks';
+    static protected $columns = ['id', 'description', 'completed', 'user_id'];
+
+    public $id;
+    public $description;
+    public $completed;
+    public $user_id;
+
     /**
-     * Insert the given task into the tasks table.
+     * Class constructor.
      * 
-     * @param  array $task
+     * @param array $args
      */
-    public function save($task)
+    public function __construct($args = [])
     {
-        App::get('database')->insert('tasks', $task);
+        $this->id = $args['id'] ?? '';
+        $this->description = $args['description'] ?? '';
+        $this->completed = $args['completed'] ?? false;
+        $this->user_id = $args['user_id'] ?? session()->user_id;
     }
 
     /**
-     * Fetch all tasks from the task table.
+     * Get all tasks that belongs to the authenticated user.
      * 
      * @return array $tasks
      */
     public function all()
     {
-        return App::get('database')->selectAll('tasks');
-    }
+        $tasks = App::get('database')->find('tasks', ['user_id' => session()->user_id]);
 
-    /**
-     * Update the details of the given tasks into task table.
-     * 
-     * @param  array $task
-     */
-    public function update($task)
-    {
-        App::get('database')->update('tasks', $task);
-    }
+        // results into objects
+        $object_array = [];
 
-    /**
-     * Remove the given task from the tasks table.
-     * 
-     * @param  array $task
-     */
-    public function delete($task)
-    {
-        App::get('database')->delete('tasks', $task[0]->id);
-    }
+        foreach ($tasks as $task) {
+            $object_array[] = static::instantiate($task);
+        }
 
-    /**
-     * Get a task from the tasks table by it's id.
-     * 
-     * @param  string $id
-     * @return array $task
-     */
-    public function findById($id)
-    {
-        return App::get('database')->find('tasks', ['id' => $id]);
+        return $object_array;
     }
 }
