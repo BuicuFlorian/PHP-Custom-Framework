@@ -11,3 +11,25 @@ h1 {
     top: 100px;
     left: 20px;
 }
+
+.navbar-nav .nav-link {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    font-size: 18px;
+}
+
+.alert {
+    position: absolute;
+    z-index: 10;
+    top: 80px;
+    right: 15px;
+    opacity: 0.9;
+}
+
+.table th, .table td {
+    font-size: 17px;
+}
+
+.page-link {
+    font-size: 17px;
+}
