@@ -14,11 +14,12 @@
         <br>
         <form method="POST" action="/tasks">
             <div class="form-group">
+                <label for="description"><b>Description:</b></label>
                 <textarea class="form-control" rows="5" name="description" id="description" placeholder="Description" required></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">
-                <i class="fa fa-plus"></i> Submit
+                <i class="fa fa-plus"></i> Add
             </button>
         </form>
       </div>
