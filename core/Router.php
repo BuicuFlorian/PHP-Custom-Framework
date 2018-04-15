@@ -4,11 +4,11 @@ namespace App\Core;
 
 use Exception;
 
-class Router 
+class Router
 {
     /**
      * A variable that hold all registered routes.
-     * 
+     *
      * @var array
      */
     protected $routes = [
@@ -21,21 +21,22 @@ class Router
 
     /**
      * Load the file where are declared all the routes.
-     * 
+     *
      * @param  $file
      * @return $router
      */
-    public static function load($file) {
+    public static function load($file)
+    {
         $router = new static;
-        
+
         require $file;
 
         return $router;
     }
-    
+
     /**
      * Register a GET route for the given uri.
-     * 
+     *
      * @param  string $uri
      * @param  string $controller
      */
@@ -46,7 +47,7 @@ class Router
 
     /**
      * Register a POST route for the given uri.
-     * 
+     *
      * @param  string $uri
      * @param  string $controller
      */
@@ -57,7 +58,7 @@ class Router
 
     /**
      * Register a PUT route for the given uri.
-     * 
+     *
      * @param  string $uri
      * @param  string $controller
      */
@@ -68,7 +69,7 @@ class Router
 
     /**
      * Register a PATCH route for the given uri.
-     * 
+     *
      * @param  string $uri
      * @param  string $controller
      */
@@ -79,7 +80,7 @@ class Router
 
     /**
      * Register a DELETE route for the given uri.
-     * 
+     *
      * @param  string $uri
      * @param  string $controller
      */
@@ -90,12 +91,12 @@ class Router
 
     /**
      * Direct the request to a route.
-     * 
+     *
      * @param  string $uri
      * @param  string $requestType
      */
     public function direct($uri, $requestType)
-    {   
+    {
         $routes = $this->routes[$requestType];
 
         if ($requestType === 'POST' && isset($_POST['_method'])) {
@@ -111,36 +112,36 @@ class Router
                 case 'PATCH':
                         $routes = $this->routes['PATCH'];
                     break;
-                
+
                 default:
                     throw new Exception('Invalid request method!');
                     break;
             }
-        } 
+        }
 
         if (array_key_exists($uri, $routes)) {
             return $this->callAction(
                 ...explode('@', $routes[$uri])
             );
         }
-        
-        throw new Exception('No route defined for this URI.');
+
+        return view('errors/404');
     }
 
     /**
      * Call the given method of the controller.
-     * 
+     *
      * @param  string $controller
      * @param  string $action
      */
     protected function callAction($controller, $action)
-    {    
-        $controller = "App\\Controllers\\{$controller}";
+    {
+        $controller = 'App\\Controllers\\' . $controller;
         $controller = new $controller;
 
-        if (! method_exists($controller, $action)) {
+        if (!method_exists($controller, $action)) {
             throw new Exception(
-                "{$controller} does not respond to the {$action} action."
+                $controller . ' does not respond to the ' . $action . ' action.'
             );
         }
 
