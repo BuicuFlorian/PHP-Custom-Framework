@@ -8,7 +8,7 @@
 
 ## Installation
 
-* Download the [repository](https://bitbucket.org/BFlorian93/php-custom-framework/get/594e1391b241.zip)
+* Download the [repository](https://github.com/BuicuFlorian/PHP-Custom-Framework/archive/refs/heads/main.zip)
 * Install composer: `composer install`
 * Run `composer dump-autoload`
 * Set the `database` in `config.php`
